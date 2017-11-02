@@ -1,0 +1,38 @@
+# prime-solo-mongo
+
+// 1.  Create a collection named orders
+> db.createCollection('orders')
+
+// 2.  Insert at least 3 documents that represent an order.  IMPORTANT: See section below for fields.  Order dates should be: 2017-02-03, 2071-04-04, 2017-01-02
+> db.getCollectionNames()
+[ "games", "orders" ]
+> var orders = db.orders
+
+> orders.insert({orderDate: '2017-02-03', orderTotal: 40, lineItems: [{unitPrice: 1.99}, {quantity: 5}, {productName:"Honeycrisp Apples"}]})
+WriteResult({ "nInserted" : 1 })
+> orders.insert({orderDate: '2017-04-04', orderTotal: 20, lineItems: [{unitPrice: 2}, {quantity: 10}, {productName:"Diet Coke"}]})
+WriteResult({ "nInserted" : 1 })
+> orders.insert({orderDate: '2017-01-02', orderTotal: 10, lineItems: [{unitPrice: 5}, {quantity: 2}, {productName:"Bacon"}]})
+WriteResult({ "nInserted" : 1 })
+
+// 3.  Find all orders and make them look pretty.
+> orders.find().pretty()
+
+// 4.  Find all orders with an orderDate that is after 1/31/2017
+> orders.find({orderDate:{$gt:'2017-01-31'}})
+{ "_id" : ObjectId("59fb63bb1d01a9a2b553bbc4"), "orderDate" : "2017-02-03", "orderTotal" : 40, "lineItems" : [ { "unitPrice" : 1.99 }, { "quantity" : 5 }, { "productName" : "Honeycrisp Apples" } ] }
+{ "_id" : ObjectId("59fb64bb1d01a9a2b553bbc5"), "orderDate" : "2017-04-04", "orderTotal" : 20, "lineItems" : [ { "unitPrice" : 2 }, { "quantity" : 10 }, { "productName" : "Diet Coke" } ] }
+
+> // 5.  Change the orderTotal from 2/3/2017 to 63 dollars (you do NOT have to ensure the lineItems' unitPrice * quantity add up to the orderTotal)
+> orders.update({orderDate: "2017-02-03"}, {$set: {"orderTotal":63}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+> // 6.  Add another lineItem to the order from 4/4/2017
+> orders.update({orderDate: '2017-04-04'}, {$push:{lineItems:[{unitPrice:3, quantity:4, productName:'oranges'}]}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+> // 7. Change the first lineItem in the order from 1/2/2017 to be for 2 'transistor radio's 
+> orders.update({orderDate: '2017-02-01'}, {$set:{productName:'transistor radio', quantity: 2}})
+WriteResult({ "nMatched" : 0, "nUpserted" : 0, "nModified" : 0 })
+
+
